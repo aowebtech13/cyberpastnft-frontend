@@ -14,5 +14,5 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
     Route::get('/nft/collection', [NFTController::class, 'getCollectionDetails']);
     Route::get('/nft/assets', [NFTController::class, 'getAssets']);
     Route::post('/subscribe', [NewsletterController::class, 'subscribe']);
-    Route::post('/contact', [ContactController::class, 'send']);
+    Route::post('/contact', [ContactController::class, 'send'])->middleware('throttle:contact_form');
 });

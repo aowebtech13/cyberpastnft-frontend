@@ -10,11 +10,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ContactMail extends Mailable
+class ContactMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     public $formData;
+
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+
+    /**
+     * The number of seconds to wait before retrying the job.
+     *
+     * @var int
+     */
+    public $backoff = 30;
 
     /**
      * Create a new message instance.
@@ -40,7 +54,7 @@ class ContactMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.contact',
+            view: 'emails.contact-sleek',
             with: [
                 'name' => $this->formData['name'],
                 'email' => $this->formData['email'],

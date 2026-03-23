@@ -188,6 +188,9 @@
                         </div>
 
                         <form id="contactForm" action="#" class="form-box">
+                            <div style="display:none;">
+                                <input type="text" name="honeypot" id="honeypot">
+                            </div>
                             <div class="row">
                                 <div class="col">
                                     <label >Your name</label>
@@ -615,7 +618,8 @@
                     email: $('#email').val(),
                     phone: $('#phone').val(),
                     subject: $('#subject').val(),
-                    message: $('#message').val()
+                    message: $('#message').val(),
+                    honeypot: $('#honeypot').val()
                 };
                 
                 $.ajax({

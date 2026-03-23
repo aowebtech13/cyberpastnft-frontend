@@ -14,9 +14,17 @@ class ContactController extends Controller
      */
     public function send(Request $request)
     {
+        // Simple honeypot check
+        if ($request->filled('honeypot')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you for your message.'
+            ]);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email:rfc,dns|max:255',
             'phone' => 'nullable|string|max:20',
             'subject' => 'required|string|max:255',
             'message' => 'required|string|max:5000',
