@@ -413,8 +413,47 @@
         dropdown('#buy');
         arlo_tm_animate_text();
         arlo_tm_about_animation();
+        ajaxSubscribe();
         
     });
 
+    var ajaxSubscribe = function () {
+        $('.subscribe-form').on('submit', function (e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $emailInput = $form.find('.subscribe-email');
+            var email = $emailInput.val();
+            var $btn = $form.find('button');
+            var btnText = $btn.text();
+
+            $btn.prop('disabled', true).text('Subscribing...');
+
+            $.ajax({
+                url: '/api/v1/subscribe',
+                type: 'POST',
+                data: {
+                    email: email
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $emailInput.val('');
+                    } else {
+                        alert(response.message || 'Something went wrong.');
+                    }
+                },
+                error: function (xhr) {
+                    var errorMsg = 'Failed to subscribe.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    alert(errorMsg);
+                },
+                complete: function () {
+                    $btn.prop('disabled', false).text(btnText);
+                }
+            });
+        });
+    };
 
 })(jQuery);

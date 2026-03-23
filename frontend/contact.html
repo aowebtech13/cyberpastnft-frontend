@@ -187,41 +187,42 @@
                             </div>
                         </div>
 
-                        <form action="#" class="form-box">
+                        <form id="contactForm" action="#" class="form-box">
                             <div class="row">
                                 <div class="col">
                                     <label >Your name</label>
-                                  <input type="text" class="form-control">
+                                  <input type="text" name="name" id="name" class="form-control" required>
                                 </div>
                                 <div class="col">
                                     <label >Your email</label>
-                                  <input type="email" class="form-control">
+                                  <input type="email" name="email" id="email" class="form-control" required>
                                 </div>
                               </div>
                               <div class="row">
                                 <div class="col">
                                     <label >Your phone</label>
-                                    <input type="text" class="form-control">
+                                    <input type="text" name="phone" id="phone" class="form-control">
                                 </div>
                                 <div class="col">
                                     <label >Subject</label>
-                                    <select class="form-control">
-                                        <option>Select</option>
-                                        <option>Select</option>
-                                        <option>Select</option>
+                                    <select name="subject" id="subject" class="form-control">
+                                        <option value="General Inquiry">General Inquiry</option>
+                                        <option value="Support">Support</option>
+                                        <option value="Partnership">Partnership</option>
                                     </select>
                                 </div>
                               </div>
                               <div class="row">
                                 <div class="col">
                                     <label >Message</label>
-                                    <textarea name="mess" id="mess" cols="30" rows="10"></textarea>
+                                    <textarea name="message" id="message" cols="30" rows="10" required></textarea>
                                 </div>
        
                               </div>
+                              <div id="contactResponse" class="mb-3" style="display:none;"></div>
                               <div class="row mb-0">
                                 <div class="col">
-                                    <button class="action-btn"><span>Send Now</span></button>
+                                    <button type="submit" class="action-btn"><span>Send Now</span></button>
                                 </div>
                               </div>
                         </form>
@@ -512,12 +513,12 @@
            
                                 
                         </div>
-                        <form action="#" class="form">
+                        <form action="#" class="form subscribe-form">
                             <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Your email">
+                                <input type="email" class="form-control subscribe-email" placeholder="Your email" required>
                                 
                             </div>
-                            <button class="action-btn"><span>Subscribe</span></button>
+                            <button class="action-btn" type="submit"><span>Subscribe</span></button>
                         </form>
                     </div>
 
@@ -591,6 +592,59 @@
 
       <script src="app/js/swiper-bundle.min.js"></script>
       <script src="app/js/swiper.js"></script>
+
+      <script>
+        $(document).ready(function() {
+            $('#contactForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const responseDiv = $('#contactResponse');
+                const submitBtn = $(this).find('button[type="submit"]');
+                const btnText = submitBtn.find('span');
+                
+                // Reset response div
+                responseDiv.hide().removeClass('text-success text-danger');
+                
+                // Disable button
+                submitBtn.prop('disabled', true);
+                const originalText = btnText.text();
+                btnText.text('Sending...');
+                
+                const formData = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                    subject: $('#subject').val(),
+                    message: $('#message').val()
+                };
+                
+                $.ajax({
+                    url: 'http://localhost:8000/api/v1/contact', // Assuming Laravel runs on 8000
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            responseDiv.text(response.message).addClass('text-success').show();
+                            $('#contactForm')[0].reset();
+                        } else {
+                            responseDiv.text(response.message || 'Something went wrong.').addClass('text-danger').show();
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMsg = 'Failed to send message. Please try again later.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        responseDiv.text(errorMsg).addClass('text-danger').show();
+                    },
+                    complete: function() {
+                        submitBtn.prop('disabled', false);
+                        btnText.text(originalText);
+                    }
+                });
+            });
+        });
+      </script>
 
     <!-- Initialize Swiper -->
 
