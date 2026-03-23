@@ -92,6 +92,10 @@ class NFTController extends Controller
                 ]);
 
                 if ($nftsResponse->failed()) {
+                    Log::error("OpenSea Assets API Failed", [
+                        'status' => $nftsResponse->status(),
+                        'response' => $nftsResponse->body()
+                    ]);
                     throw new \Exception('Failed to fetch assets from OpenSea', $nftsResponse->status());
                 }
 

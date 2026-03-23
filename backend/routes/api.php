@@ -10,7 +10,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::prefix('v1')->middleware('throttle:api')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::get('/nft/collection', [NFTController::class, 'getCollectionDetails']);
     Route::get('/nft/assets', [NFTController::class, 'getAssets']);
     Route::post('/subscribe', [NewsletterController::class, 'subscribe']);
